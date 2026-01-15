@@ -56,6 +56,48 @@ const handleFileUpload = (type) => (e) => {
   reader.readAsText(file);
 };
 
+// Drag and drop handlers
+const handleFileDrop = (type) => (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  e.currentTarget.classList.remove('dragging');
+
+  const file = e.dataTransfer.files[0];
+  if (!file || !file.name.endsWith('.json')) return;
+
+  const reader = new FileReader();
+  reader.onload = (event) => {
+    try {
+      const data = JSON.parse(event.target.result);
+      state[type] = data;
+    } catch (err) {
+      console.error(`Error parsing ${type}:`, err);
+    }
+  };
+  reader.readAsText(file);
+};
+
+const handleDragOver = (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+};
+
+const handleDragEnter = (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  e.currentTarget.classList.add('dragging');
+};
+
+const handleDragLeave = (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  // Only remove dragging class if we're actually leaving the upload zone
+  // (not just entering a child element)
+  if (!e.currentTarget.contains(e.relatedTarget)) {
+    e.currentTarget.classList.remove('dragging');
+  }
+};
+
 // Helpers
 const isDataLoaded = () => state.alignments && state.glossary && state.rules;
 
@@ -265,10 +307,16 @@ const UploadZone = ({ type, label, data }) => {
   const loaded = data !== null;
   const status = loaded
     ? `${type === 'alignments' ? data.alignments?.length || 0 : (data.entries?.length || data.rules?.length || 0)} items`
-    : 'Click to upload';
+    : 'Drop file or click to upload';
 
   return html`
-    <label class="upload-zone ${loaded ? 'loaded' : ''}">
+    <label
+      class="upload-zone ${loaded ? 'loaded' : ''}"
+      onDragOver=${handleDragOver}
+      onDragEnter=${handleDragEnter}
+      onDragLeave=${handleDragLeave}
+      onDrop=${handleFileDrop(type)}
+    >
       <input type="file" accept=".json" onChange=${handleFileUpload(type)} />
       <div class="upload-zone-label">${label}</div>
       <div class="upload-zone-status">${status}</div>

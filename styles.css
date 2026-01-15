@@ -101,6 +101,12 @@ body {
   background: var(--root-bg);
 }
 
+.upload-zone.dragging {
+  border-color: var(--accent);
+  border-style: solid;
+  background: var(--bg-secondary);
+}
+
 .upload-zone input {
   display: none;
 }
