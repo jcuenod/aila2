@@ -309,6 +309,8 @@ const savePatch = (modalEl) => {
 };
 
 // Components
+const ClearIcon = () => html`<span class="icon-clear"></span>`;
+
 const UploadZone = ({ type, label, data }) => {
   const loaded = data !== null;
   const status = loaded
@@ -473,13 +475,20 @@ const BrowseSidebar = () => {
     <div class="sidebar">
       <div class="sidebar-header">
         <h2>Dictionary</h2>
-        <input
-          type="text"
-          class="sidebar-search"
-          placeholder="Search glossary & rules..."
-          value="${state.sidebarSearch}"
-          onInput=${(e) => { state.sidebarSearch = e.target.value; }}
-        />
+        <div class="search-container">
+          <input
+            type="text"
+            class="sidebar-search"
+            placeholder="Search glossary & rules..."
+            value="${state.sidebarSearch}"
+            onInput=${(e) => { state.sidebarSearch = e.target.value; }}
+          />
+          ${state.sidebarSearch ? html`
+            <button class="clear-btn" onClick=${() => { state.sidebarSearch = ''; }}>
+              ${ClearIcon()}
+            </button>
+          ` : ''}
+        </div>
       </div>
       <div class="sidebar-content">
         <div class="sidebar-section">
@@ -594,13 +603,20 @@ const MainView = () => {
               <span class="stat"><span class="stat-value">${state.rules.rules.length}</span> rules</span>
             </div>
           </div>
-          <input
-            type="text"
-            class="search-input"
-            placeholder="Filter alignments..."
-            value="${state.searchQuery}"
-            onInput=${(e) => { state.searchQuery = e.target.value; }}
-          />
+          <div class="search-container">
+            <input
+              type="text"
+              class="search-input"
+              placeholder="Filter alignments..."
+              value="${state.searchQuery}"
+              onInput=${(e) => { state.searchQuery = e.target.value; }}
+            />
+            ${state.searchQuery ? html`
+              <button class="clear-btn" onClick=${() => { state.searchQuery = ''; }}>
+                ${ClearIcon()}
+              </button>
+            ` : ''}
+          </div>
         </div>
 
         ${alignments.length > 0
