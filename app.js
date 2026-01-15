@@ -271,6 +271,12 @@ const reset = () => {
   state.selectedWord = null;
 };
 
+const confirmReset = () => {
+  if (confirm('This will unload the current project. Are you sure?')) {
+    reset();
+  }
+};
+
 // Modal functions
 const openEditModal = (type, entry) => {
   state.editingEntry = { type, entry };
@@ -578,7 +584,7 @@ const MainView = () => {
         <div class="header">
           <div class="header-top">
             <h1>${state.alignments.project || 'Alignments'}</h1>
-            <button class="reset-btn" onClick=${reset}>Reset</button>
+            <button class="reset-btn" onClick=${confirmReset}>Reset</button>
           </div>
           <div class="header-meta">
             ${state.alignments.source_language} → ${state.alignments.target_language}
